@@ -4,6 +4,7 @@
 #include <time.h>
 #include <string>
 #include <vector>
+#include "TradeDay.h"
 
 //-----------------------------declairation-start-----------------------------
 
@@ -17,7 +18,8 @@ typedef const std::string Ticker;
 class Vector : public std::vector<double>
 {
 public:
-	Vector(size_t size); //确定会调用移动构造吗？
+	Vector(size_t size); 
+	//确定会调用移动构造吗？
 
 	Vector operator *(double x);
 	Vector operator *(const Vector& r);
@@ -49,13 +51,22 @@ public:
 template <typename T>
 class Series
 {
-public:
+protected:
 	Vector values;
 	std::vector<T> index;
 
+	void sort_by_value(size_t start, size_t end); // helper function
+
+public:
 	Series(const Vector& data);
 	Series(const std::vector<T>&& index, const Vector&& data);
 	Series(const Vector& data, int start);
+
+	Vector get_values() const;
+	Vector get_index() const;
+
+	void set_values();
+	void set_index();
 
 	double& operator [](size_t n);
 	Series pct_change() const;
@@ -105,305 +116,93 @@ typedef std::vector < std::pair<Vector, Vector> > SummaryMatrix;
 
 inline Vector::Vector(size_t size) : std::vector<double>(size) { }
 
-inline Vector Vector::operator *(double x)
+template <typename T>
+inline void Series<T>::sort_by_value()
 {
-	const int _sz(size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = (*this)[i] * x;
-	}
-
-	return _tv;
-}
-
-inline Vector operator *(double x, const Vector& v)
-{
-	const int _sz(v.size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = v[i] * x;
-	}
-
-	return _tv;
-}
-
-inline Vector Vector::operator *(const Vector& r)
-{
-	const int _sz(size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = (*this)[i] * r[i];
-	}
-
-	return _tv;
-}
-
-
-inline double Vector::operator ^(const Vector& r)
-{
-	double _ans(0.0);
-
-	const int _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_ans += (*this)[i] * r[i];
-	}
-
-	return _ans;
-}
-
-
-inline Vector Vector::operator +(double x)
-{
-	const int _sz(size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = (*this)[i] + x;
-	}
-
-	return _tv;
-}
-
-inline Vector operator +(double x, const Vector& v)
-{
-	const int _sz(v.size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = v[i] + x;
-	}
-
-	return _tv;
-}
-
-inline Vector Vector::operator +(const Vector& r)
-{
-	const int _sz(size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = (*this)[i] + r[i];
-	}
-
-	return _tv;
-}
-
-inline Vector Vector::operator -(double x)
-{
-	const int _sz(size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = (*this)[i] - x;
-	}
-
-	return _tv;
-}
-
-inline Vector operator -(double x, const Vector& v)
-{
-	const int _sz(v.size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = x - v[i];
-	}
-
-	return _tv;
-}
-
-inline Vector Vector::operator -(const Vector& r)
-{
-	const int _sz(size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = (*this)[i] - r[i];
-	}
-
-	return _tv;
-}
-
-inline Vector Vector::operator /(double x)
-{
-	const int _sz(size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = (*this)[i] / x;
-	}
-
-	return _tv;
-}
-
-inline Vector Vector::operator /(const Vector& r)
-{
-	const int _sz(size());
-
-	Vector _tv(_sz);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_tv[i] = (*this)[i] / r[i];
-	}
-
-	return _tv;
-}
-
-inline const Vector& Vector::operator +=(double x)
-{
-	const int _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		(*this)[i] += x;
-	}
-
-	return *this;
-}
-
-inline const Vector& Vector::operator -=(double x)
-{
-	const int _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		(*this)[i] -= x;
-	}
-
-	return *this;
-}
-
-inline const Vector& Vector::operator *=(double x)
-{
-	const int _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		(*this)[i] *= x;
-	}
-
-	return *this;
-}
-
-inline const Vector& Vector::operator /=(double x)
-{
-	const int _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		(*this)[i] /= x;
-	}
-
-	return *this;
-}
-
-inline const Vector& Vector::operator +=(const Vector& r)
-{
-	const int _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		(*this)[i] += r[i];
-	}
-
-	return *this;
-}
-
-inline const Vector& Vector::operator -=(const Vector& r)
-{
-	const int _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		(*this)[i] -= r[i];
-	}
-
-	return *this;
-}
-
-inline const Vector& Vector::operator *=(const Vector& r)
-{
-	const int _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		(*this)[i] *= r[i];
-	}
-
-	return *this;
-}
-
-inline const Vector& Vector::operator /=(const Vector& r)
-{
-	const size_t _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		(*this)[i] /= r[i];
-	}
-
-	return *this;
-}
-
-inline Vector Vector::cumsum() const
-{
-	const size_t _sz(size());
-	
-	if (_sz == 0)
-	{
-		return Vector(0);
-	}
-	
-	Vector _tmp(_sz);
-	double _t_sum(0.0);
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_t_sum = _tmp[i] = (*this)[i] + _t_sum; //is this correct?
-	}
-
-	return _tmp;
-}
-
-inline std::ostream& operator <<(std::ostream& ost, const Vector& v)
-{
-	for (const auto& it : v)
-	{
-		ost << it << std::endl;
-	}
-	ost << std::endl;
-
-	return ost;
+	return sort_by_value(0, size() - 1);
 }
 
 template <typename T>
-inline std::ostream& operator <<(std::ostream& ost, const Series<T>& se)
+void Series<T>::sort_by_value(size_t start, size_t end)
+{
+	if (end == 0 || start >= end)
+	{
+		return;
+	}
+
+	size_t pivot = _partition<T>(index, value, start, end);
+	sort_by_value(start, pivot - 1);
+	sort_by_value(pivot + 1, end);
+}
+
+template <typename IndexType>
+size_t _partition(std::vector<IndexType> index_v, Vector value_v, size_t start, size_t end)
+{
+	size_t mid((start + end) / 2), pivot;
+
+	//using median of start, end, mid as pivot
+	if (value_v[start] > value_v[end])
+	{
+		if (value_v[mid] > value_v[start])
+		{
+			pivot = start;
+		}
+		else if (value_v[mid] < value_v[end])
+		{
+			pivot = end;
+		}
+		else
+		{
+			pivot = mid;
+		}
+	}
+	else
+	{
+		if (value_v[mid] > value_v[end])
+		{
+			pivot = end;
+		}
+		else if (value_v[mid] < value_v[start])
+		{
+			pivot = start;
+		}
+		else
+		{
+			pivot = mid;
+		}
+	}
+
+	std::swap(value_v[pivot], value_v[end]);
+	std::swap(index_v[pivot], index_v[end]);
+	
+	size_t back(end - 1);
+	while (true)
+	{
+		while (value_v[start] <= value_v[end])
+		{
+			++start;
+		}
+
+		while (value_v[back]) >= value_v[end])
+		{
+			--back；
+		}
+
+		if (start >= back)
+		{
+			break;
+		}
+
+		std::swap(value_v[start], value_v[back]);
+		std::swap(index_v[start], index_v[back]);
+	}
+
+	std::swap(value_v[start], value_v[end]);
+	std::swap(index_[start], value_v[end]);
+}
+
+template <typename T>
+std::ostream& operator <<(std::ostream& ost, const Series<T>& se)
 {
 	const size_t _sz(se.size());
 

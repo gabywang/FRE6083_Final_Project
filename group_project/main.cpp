@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#if 0
+#if 1
 #include "DataTypes.h"
 #include "HistDataManager.h"
 #include "EPSManager.h"
@@ -17,7 +17,7 @@ int main()
 	PlotManager* plot_manager(PlotManager::get_instance());
 
 	SummaryMatrix result;
-	Series<TradeDay> index_se(hist_data_fetcher->get_ticker_price(INDEX_TKR, TradeDay(INDEX_START), TradeDay(INDEX_END));
+	Series<TradeDay> index_se(hist_data_fetcher->get_ticker_price(std::move(INDEX_TKR), TradeDay(INDEX_START), TradeDay(INDEX_END));
 
 	FOR_LOOP(0, i, SAMPLE_COUNT)
 	{
@@ -69,6 +69,7 @@ int main()
 }
 #endif
 
+#if 0
 #include "pch.h"
 #include "Menu.h"
 
@@ -77,3 +78,4 @@ int main()
 	Menu* menu = Menu::get_instance();
 	return menu->run_forever();
 }
+#endif
