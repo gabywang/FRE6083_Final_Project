@@ -72,10 +72,16 @@ public:
 
 		return ost;
 	}
-
-	Series(const std::vector<T> index, const Vector data); //yes we do want to copy
+	Series() = default;
+	Series(const std::vector<T>& index, const Vector& data); //yes we do want to copy
+	Series(const std::string& file_path, unsigned int index_col, unsigned int data_col, unsigned int start_rol);
+	
+	Series(const Vector& data, int start = 0);
 	Series(const Vector&& data, int start = 0);
-	Series(const std::string&& file_path, unsigned int index_col, unsigned int data_col, unsigned int start_rol);
+	Series(const Series&& rhs) noexcept;
+	Series(const Series& rhs) = default;
+	Series<T, ComparableIndex>& operator =(const Series& rhs);
+	Series<T, ComparableIndex>& operator =(const Series&& rhs);
 
 	Vector& get_values();
 	std::vector<T>& get_index();
@@ -122,6 +128,14 @@ typedef std::vector < std::vector<TickerInfo> > GroupResult;
 
 typedef std::vector < std::pair<Vector, Vector> > SummaryMatrix;
 
+class PriceBuff
+{
+public:
+	PriceBuff(const Ticker&& tkr, const Series<TradeDay, false>&& p);
+	
+	Ticker name;
+	Series<TradeDay, false> price;
+};
 
 //-----------------------------definition-start-----------------------------
 inline Vector::Vector(size_t size) : std::vector<double>(size) { }
@@ -148,17 +162,33 @@ inline void set(TickerInfo& left, int right)
 }
 
 template <typename T, bool ComparableIndex>
-inline Series<T, ComparableIndex>::Series(const std::vector<T> index, const Vector values): _size(index.size()) // possibly problems here
+inline Series<T, ComparableIndex>::Series(const std::vector<T>& index, const Vector& values): _size(index.size()) // possibly problems here
 {
 	if (index.size() != values.size()) throw new std::invalid_argument("Size of index and value mismatch."); //is that correct?
 
-	_index = std::move(index);
-	_values = std::move(values);
+	_index = index;
+	_values = values;
+}
+
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex>::Series(const Series<T, ComparableIndex>&& rhs) noexcept : _index(std::move(rhs._index)), _values(std::move(rhs._values)), _size(rhs._size) { }
+
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex>::Series(const Vector&& data, int start) : _size(data.size()), _index(_size), _values(std::move(data))
+{
+	if (ComparableIndex)
+	{
+		FOR_LOOP(0, i, _size)
+		{
+			set(_index[i], i + start);
+		}
+	}
 }
 
 
+
 template <typename T, bool ComparableIndex>
-inline Series<T, ComparableIndex>::Series(const Vector&& data, int start): _size(data.size()), _index(_size), _values(std::move(data))
+inline Series<T, ComparableIndex>::Series(const Vector& data, int start) : _size(data.size()), _index(_size), _values(data)
 {
 	if (ComparableIndex)
 	{
@@ -170,7 +200,27 @@ inline Series<T, ComparableIndex>::Series(const Vector&& data, int start): _size
 }
 
 template <typename T, bool ComparableIndex>
-inline Series<T, ComparableIndex>::Series(const std::string&& file_path, unsigned int index_col, unsigned int data_col, unsigned int start_row)
+Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator =(const Series&& rhs)
+{
+	_index = std::move(rhs._index);
+	_values = std::move(rhs._values);
+	_size = rhs._size;
+
+	return *this;
+}
+
+template <typename T, bool ComparableIndex>
+Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator =(const Series& rhs)
+{
+	_index = rhs._index;
+	_values = rhs._values;
+	_size = rhs._size;
+
+	return *this;
+}
+
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex>::Series(const std::string& file_path, unsigned int index_col, unsigned int data_col, unsigned int start_row)
 {
 	std::ifstream file;
 
@@ -188,7 +238,9 @@ inline Series<T, ComparableIndex>::Series(const std::string&& file_path, unsigne
 template <typename T, bool ComparableIndex>
 inline void Series<T, ComparableIndex>::sort_by_value()
 {
-	return sort_by_value(0, _size - 1);
+	if (_size == 0) return;
+	
+	sort_by_value(0, _size - 1);
 }
 
 template <typename T>
@@ -354,13 +406,14 @@ Series<T, ComparableIndex> Series<T, ComparableIndex>::pct_change() const
 		throw new std::invalid_argument("Series too short for percent change.");
 	}
 	
-	Series<T> _tmp(_size - 1);
+	Series<T, ComparableIndex> _tmp(_size - 1);
 	
 	FOR_LOOP(0, i, _size - 1)
 	{
 		_tmp[i] = _values[i + 1] / _values[i] - 1.0; // we are certain that values are double
 	}
 
+	_tmp.set_index(std::move(std::vector<T>(++(_index.begin()), _index.end())));
 	return _tmp;
 }
 
@@ -522,4 +575,6 @@ inline Series<T, ComparableIndex> Series<T, ComparableIndex>::cumsum() const
 }
 
 std::ostream& operator <<(std::ostream& ost, const TickerInfo& tkr);
+
+inline PriceBuff::PriceBuff(const Ticker&& tkr, const Series<TradeDay, false>&& p) : name(std::move(tkr)), price(std::move(p)) { }
 #endif

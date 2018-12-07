@@ -33,7 +33,6 @@ VectorLike read_col_from_csv(std::ifstream& file , unsigned int start_row, unsig
 					std::stringstream ss;
 					ss << std::string(str_ptr);
 					ss >> one_cell;
-					//std::cout << one_cell << std::endl;
 					result.push_back(one_cell);
 				}
 
