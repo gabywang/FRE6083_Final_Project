@@ -9,19 +9,20 @@
 class EPSManager
 {
 protected:
-	Series<TickerInfo> _eps_diff_series;
+	static EPSManager* _instance;
+	
+	Series<TickerInfo, false> _eps_diff_se;
+
+	EPSManager(const std::string&& file_path);
+	EPSManager(const EPSManager& rhs);
+	EPSManager& operator =(const EPSManager& rhs);
 
 public:
-	EPSManager();
+	static EPSManager* get_instance(const std::string&& file_path);
 
-	void load(const std::string& path = EPS_FILE);
-
-	GroupResult get_group_result(int n) const;
+	GroupResult get_group_result() const;
 
 	~EPSManager();
 };
-
-//使用指定位置的excel表格初始化_eps_vector
-
 #endif
 

@@ -297,3 +297,10 @@ std::ostream& operator <<(std::ostream& ost, const Vector& v)
 
 	return ost;
 }
+
+std::ostream& operator <<(std::ostream& ost, const TickerInfo& tkr)
+{
+	//ost << tkr.first << ": " << tkr.second << std::endl;
+	ost << tkr.first << std::endl;
+	return ost;
+}

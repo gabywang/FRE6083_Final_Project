@@ -1,7 +1,0 @@
-﻿  pch.cpp
-  DataTypes.cpp
-  curl_test.cpp
-  main.cpp
-  Generating Code...
-MSVCRTD.lib(exe_main.obj) : error LNK2019: unresolved external symbol _main referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
-C:\Users\Rex Hoo\Documents\workspace\financial_computing\FRE6083_Final_Project\Debug\group_project.exe : fatal error LNK1120: 1 unresolved externals

@@ -16,15 +16,17 @@ struct ParseResult {
 	time_t timestamp;
 };
 
-typedef const std::string Ticker;
+typedef std::string Ticker;
 
 class Vector : public std::vector<double>
 {
 	friend std::ostream& operator <<(std::ostream& ost, const Vector& v);
 
 public:
+	Vector() = default;
 	Vector(size_t size);
-	Vector();
+	Vector(std::vector<double>::iterator begin, std::vector<double>::iterator end);
+
 
 	Vector operator *(double x);
 	Vector operator *(const Vector& r);
@@ -48,7 +50,7 @@ public:
 	Vector cumsum() const;
 };
 
-template <typename T>
+template <typename T, bool ComparableIndex = true>
 class  Series
 {
 protected:
@@ -85,32 +87,33 @@ public:
 	void set_index(const std::vector<T>&& rhs);
 
 	double& operator [](size_t n);
+	double operator [](size_t n) const;
 	size_t find(const T& key);
 	
-	Series<T> pct_change() const;
+	Series<T, ComparableIndex> pct_change() const;
 	size_t size() const;
 
 	void sort_by_value();
-	Series<T> right_join(const std::vector<T>& keys);
-	Series<T> cumsum() const;
+	Series<T, ComparableIndex> right_join(const std::vector<T>& keys);
+	Series<T, ComparableIndex> cumsum() const;
 
-	Series<T> operator *(double x) const;
-	Series<T> operator *(const Series& r) const;
-	Series<T> operator +(double x) const;
-	Series<T> operator +(const Series& r) const;
-	Series<T> operator -(double x) const;
-	Series<T> operator -(const Series& r) const;
-	Series<T> operator /(double x) const;
-	Series<T> operator /(const Series& r) const;
+	Series<T, ComparableIndex> operator *(double x) const;
+	Series<T, ComparableIndex> operator *(const Series& r) const;
+	Series<T, ComparableIndex> operator +(double x) const;
+	Series<T, ComparableIndex> operator +(const Series& r) const;
+	Series<T, ComparableIndex> operator -(double x) const;
+	Series<T, ComparableIndex> operator -(const Series& r) const;
+	Series<T, ComparableIndex> operator /(double x) const;
+	Series<T, ComparableIndex> operator /(const Series& r) const;
 
-	const Series<T>& operator +=(double x);
-	const Series<T>& operator -=(double x);
-	const Series<T>& operator *=(double x);
-	const Series<T>& operator /=(double x);
-	const Series<T>& operator +=(const Series<T>& r);
-	const Series<T>& operator -=(const Series<T>& r);
-	const Series<T>& operator *=(const Series<T>& r);
-	const Series<T>& operator /=(const Series<T>& r);
+	const Series<T, ComparableIndex>& operator +=(double x);
+	const Series<T, ComparableIndex>& operator -=(double x);
+	const Series<T, ComparableIndex>& operator *=(double x);
+	const Series<T, ComparableIndex>& operator /=(double x);
+	const Series<T, ComparableIndex>& operator +=(const Series<T, ComparableIndex>& r);
+	const Series<T, ComparableIndex>& operator -=(const Series<T, ComparableIndex>& r);
+	const Series<T, ComparableIndex>& operator *=(const Series<T, ComparableIndex>& r);
+	const Series<T, ComparableIndex>& operator /=(const Series<T, ComparableIndex>& r);
 };
 
 typedef std::pair<Ticker, TradeDay> TickerInfo;
@@ -122,10 +125,30 @@ typedef std::vector < std::pair<Vector, Vector> > SummaryMatrix;
 
 //-----------------------------definition-start-----------------------------
 inline Vector::Vector(size_t size) : std::vector<double>(size) { }
-inline Vector::Vector() : std::vector<double>() { }
+inline Vector::Vector(std::vector<double>::iterator begin, std::vector<double>::iterator end) : std::vector<double>(begin, end) { }
 
-template <typename T>
-inline Series<T>::Series(const std::vector<T> index, const Vector values): _size(index.size()) // possibly problems here
+inline void set(double& left, double right)
+{
+	left = right;
+}
+
+inline void set(size_t& left, size_t right)
+{
+	left = right;
+}
+
+inline void set(int& left, int right)
+{
+	left = right;
+}
+
+inline void set(TickerInfo& left, int right)
+{
+	;
+}
+
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex>::Series(const std::vector<T> index, const Vector values): _size(index.size()) // possibly problems here
 {
 	if (index.size() != values.size()) throw new std::invalid_argument("Size of index and value mismatch."); //is that correct?
 
@@ -133,17 +156,21 @@ inline Series<T>::Series(const std::vector<T> index, const Vector values): _size
 	_values = std::move(values);
 }
 
-template <typename T>
-inline Series<T>::Series(const Vector&& data, int start): _size(data.size()), _index(_size), _values(std::move(data))
+
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex>::Series(const Vector&& data, int start): _size(data.size()), _index(_size), _values(std::move(data))
 {
-	FOR_LOOP(0, i, _size)
+	if (ComparableIndex)
 	{
-		_index[i] = i + start;
+		FOR_LOOP(0, i, _size)
+		{
+			set(_index[i], i + start);
+		}
 	}
 }
 
-template <typename T>
-inline Series<T>::Series(const std::string&& file_path, unsigned int index_col, unsigned int data_col, unsigned int start_row)
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex>::Series(const std::string&& file_path, unsigned int index_col, unsigned int data_col, unsigned int start_row)
 {
 	std::ifstream file;
 
@@ -158,8 +185,8 @@ inline Series<T>::Series(const std::string&& file_path, unsigned int index_col, 
 	file.close();
 }
 
-template <typename T>
-inline void Series<T>::sort_by_value()
+template <typename T, bool ComparableIndex>
+inline void Series<T, ComparableIndex>::sort_by_value()
 {
 	return sort_by_value(0, _size - 1);
 }
@@ -232,8 +259,8 @@ size_t _partition(std::vector<T>& index_v, Vector& value_v, size_t start, size_t
 	return start;
 }
 
-template <typename T>
-void Series<T>::sort_by_value(size_t start, size_t end)
+template <typename T, bool ComparableIndex>
+void Series<T, ComparableIndex>::sort_by_value(size_t start, size_t end)
 {
 	if (start >= end)
 	{
@@ -251,54 +278,60 @@ void Series<T>::sort_by_value(size_t start, size_t end)
 	}
 }
 
-template <typename T>
-inline Vector& Series<T>::get_values()
+template <typename T, bool ComparableIndex>
+inline Vector& Series<T, ComparableIndex>::get_values()
 {
 	return _values;
 }
 
-template <typename T>
-inline std::vector<T>& Series<T>::get_index()
+template <typename T, bool ComparableIndex>
+inline std::vector<T>& Series<T, ComparableIndex>::get_index()
 {
 	return _index;
 }
 
-template <typename T>
-inline const Vector& Series<T>::get_values() const
+template <typename T, bool ComparableIndex>
+inline const Vector& Series<T, ComparableIndex>::get_values() const
 {
 	return _values;
 }
 
-template <typename T>
-inline const std::vector<T>& Series<T>::get_index() const
+template <typename T, bool ComparableIndex>
+inline const std::vector<T>& Series<T, ComparableIndex>::get_index() const
 {
 	return _index;
 }
 
-template <typename T>
-inline void Series<T>::set_values(const Vector&& rhs)
+template <typename T, bool ComparableIndex>
+inline void Series<T, ComparableIndex>::set_values(const Vector&& rhs)
 {
 	if (rhs.size() != _size) throw new std::invalid_argument("New value mismatch.");
 
 	_values = std::move(rhs);
 }
 
-template <typename T>
-inline void Series<T>::set_index(const std::vector<T>&& rhs)
+template <typename T, bool ComparableIndex>
+inline void Series<T, ComparableIndex>::set_index(const std::vector<T>&& rhs)
 {
 	if (rhs.size() != _size) throw new std::invalid_argument("New index mismatch.");
 
 	_index = std::move(rhs);
 }
 
-template <typename T>
-inline double& Series<T>::operator [](size_t n)
+template <typename T, bool ComparableIndex>
+inline double& Series<T, ComparableIndex>::operator [](size_t n)
 {
 	return _values[n];
 }
 
-template <typename T>
-inline size_t Series<T>::find(const T& key)
+template <typename T, bool ComparableIndex>
+double Series<T, ComparableIndex>::operator [](size_t n) const
+{
+	return _values[n];
+}
+
+template <typename T, bool ComparableIndex>
+inline size_t Series<T, ComparableIndex>::find(const T& key)
 {
 	size_t idx(0);
 	while (idx < _size)
@@ -313,8 +346,8 @@ inline size_t Series<T>::find(const T& key)
 	return idx;
 }
 
-template <typename T>
-Series<T> Series<T>::pct_change() const
+template <typename T, bool ComparableIndex>
+Series<T, ComparableIndex> Series<T, ComparableIndex>::pct_change() const
 {
 	if (_size == 0)
 	{
@@ -331,14 +364,14 @@ Series<T> Series<T>::pct_change() const
 	return _tmp;
 }
 
-template <typename T>
-inline size_t Series<T>::size() const
+template <typename T, bool ComparableIndex>
+inline size_t Series<T, ComparableIndex>::size() const
 {
 	return _size;
 }
 
-template <typename T>
-Series<T> Series<T>::right_join(const std::vector<T>& keys)
+template <typename T, bool ComparableIndex>
+Series<T, ComparableIndex> Series<T, ComparableIndex>::right_join(const std::vector<T>& keys)
 {
 	const size_t k_len(keys.size());
 	size_t right(0), pos;
@@ -360,132 +393,133 @@ Series<T> Series<T>::right_join(const std::vector<T>& keys)
 	return tmp;
 }
 
-template <typename T>
-inline Series<T> Series<T>::operator *(double x) const
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex> Series<T, ComparableIndex>::operator *(double x) const
 {
 	Series<T> _tmp(*this);
 	_tmp._values *= x;
 	return _tmp;
 }
 
-template <typename T>
-inline Series<T> Series<T>::operator *(const Series<T>& r) const
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex> Series<T, ComparableIndex>::operator *(const Series<T, ComparableIndex>& r) const
 {
 	Series<T> _tmp(*this);
 	_tmp._values *= r._values;
 	return _tmp;
 }
 
-template <typename T>
-inline Series<T> Series<T>::operator +(double x) const
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex> Series<T, ComparableIndex>::operator +(double x) const
 {
 	Series<T> _tmp(*this);
 	_tmp._values += x;
 	return _tmp;
 }
 
-template <typename T>
-inline Series<T> Series<T>::operator +(const Series<T>& r) const
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex> Series<T, ComparableIndex>::operator +(const Series<T, ComparableIndex>& r) const
 {
 	Series<T> _tmp(*this);
 	_tmp._values += r._values;
 	return _tmp;
 }
 
-template <typename T>
-inline Series<T> Series<T>::operator -(double x) const 
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex> Series<T, ComparableIndex>::operator -(double x) const
 {
 	Series<T> _tmp(*this);
 	_tmp._values -= x;
 	return _tmp;
 }
 
-template <typename T>
-inline Series<T> Series<T>::operator -(const Series<T>& r) const
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex> Series<T, ComparableIndex>::operator -(const Series<T, ComparableIndex>& r) const
 {
 	Series<T> _tmp(*this);
 	_tmp._values -= r._values;
 	return _tmp;
 }
 
-template <typename T>
-inline Series<T> Series<T>::operator /(double x) const
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex> Series<T, ComparableIndex>::operator /(double x) const
 {
 	Series<T> _tmp(*this);
 	_tmp._values /= x;
 	return _tmp;
 }
 
-template <typename T>
-inline Series<T> Series<T>::operator /(const Series<T>& r) const
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex> Series<T, ComparableIndex>::operator /(const Series<T, ComparableIndex>& r) const
 {
 	Series<T> _tmp(*this);
 	_tmp._values /= r._values;
 	return _tmp;
 }
 
-template <typename T>
-inline const Series<T>& Series<T>::operator +=(double x)
+template <typename T, bool ComparableIndex>
+inline const Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator +=(double x)
 {
 	_values += x;
 	return *this;
 }
 
-template <typename T>
-inline const Series<T>& Series<T>::operator -=(double x)
+template <typename T, bool ComparableIndex>
+inline const Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator -=(double x)
 {
 	_values -= x;
 	return *this;
 }
 
-template <typename T>
-inline const Series<T>& Series<T>::operator *=(double x)
+template <typename T, bool ComparableIndex>
+inline const Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator *=(double x)
 {
 	_values *= x;
 	return *this;
 }
 
-template <typename T>
-inline const Series<T>& Series<T>::operator /=(double x)
+template <typename T, bool ComparableIndex>
+inline const Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator /=(double x)
 {
 	_values /= x;
 	return *this;
 }
 
-template <typename T>
-inline const Series<T>& Series<T>::operator +=(const Series<T>& r)
+template <typename T, bool ComparableIndex>
+inline const Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator +=(const Series<T, ComparableIndex>& r)
 {
 	_values += r._values;
 	return *this;
 }
 
-template <typename T>
-inline const Series<T>& Series<T>::operator -=(const Series<T>& r)
+template <typename T, bool ComparableIndex>
+inline const Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator -=(const Series<T, ComparableIndex>& r)
 {
 	_values -= r._values;
 	return *this;
 }
 
-template <typename T>
-inline const Series<T>& Series<T>::operator *=(const Series<T>& r)
+template <typename T, bool ComparableIndex>
+inline const Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator *=(const Series<T, ComparableIndex>& r)
 {
 	_values *= r._values;
 	return *this;
 }
 
-template <typename T>
-inline const Series<T>& Series<T>::operator /=(const Series<T>& r)
+template <typename T, bool ComparableIndex>
+inline const Series<T, ComparableIndex>& Series<T, ComparableIndex>::operator /=(const Series<T, ComparableIndex>& r)
 {
 	_values /= r._values;
 	return *this;
 }
 
-template <typename T>
-inline Series<T> Series<T>::cumsum() const
+template <typename T, bool ComparableIndex>
+inline Series<T, ComparableIndex> Series<T, ComparableIndex>::cumsum() const
 {
 	Series<T> _tmp(_size);
 	_tmp.set_values(_values.cumsum());
 	return _tmp;
 }
 
+std::ostream& operator <<(std::ostream& ost, const TickerInfo& tkr);
 #endif

@@ -3,12 +3,25 @@
 #include "DataTypes.h"
 #include "utils.h"
 #include "configure.h"
+#include "EPSManager.h"
 #include <fstream>
 
-#define VECTOR_TEST 1
-#define SERIES_TEST 1
-#define SERIES_FUNCS 1
-#define EXCEL_INTERACT 1
+#define VECTOR_TEST 0
+#define SERIES_TEST 0
+#define SERIES_FUNCS 0
+#define EXCEL_INTERACT 0
+#define EPS_MANAGER 1
+
+template <typename T>
+std::ostream& operator <<(std::ostream& ost, const std::vector<T>& it)
+{
+	FOR_LOOP(0, i, it.size())
+	{
+		ost << it[i] << std::endl;
+	}
+	ost << std::endl;
+	return ost;
+}
 
 int main()
 {
@@ -109,6 +122,13 @@ int main()
 	*/
 	Series<int> seee(std::move(EPS_FILE), 0, 1, 1);
 	std::cout << seee;
+
+#endif
+
+#if EPS_MANAGER
+	EPSManager* eps_manager = EPSManager::get_instance(std::move(EPS_FILE));
+	GroupResult&& gr = eps_manager->get_group_result();
+
 
 #endif
 	return 0;

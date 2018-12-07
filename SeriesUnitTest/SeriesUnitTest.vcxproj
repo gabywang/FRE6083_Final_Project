@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="..\group_project\configure.cpp" />
     <ClCompile Include="..\group_project\DataTypes.cpp" />
+    <ClCompile Include="..\group_project\EPSManager.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
