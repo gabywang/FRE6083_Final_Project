@@ -13,6 +13,6 @@
 
 #define MAX(a, b) (a) > (b) ? (a) : (b)
 
-#define FOR_LOOP(s, i, n) for (int i(s); i < n; ++i)
+#define FOR_LOOP(s, i, n) for (size_t i(s); i < n; ++i)
 
 #endif //PCH_H
