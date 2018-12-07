@@ -13,12 +13,12 @@ protected:
 	
 	Series<TickerInfo, false> _eps_diff_se;
 
-	EPSManager(const std::string&& file_path);
-	EPSManager(const EPSManager& rhs);
-	EPSManager& operator =(const EPSManager& rhs);
+	EPSManager(const std::string& file_path);
+	EPSManager(const EPSManager& rhs) = delete;
+	EPSManager& operator =(const EPSManager& rhs) = delete;
 
 public:
-	static EPSManager* get_instance(const std::string&& file_path);
+	static EPSManager* get_instance(const std::string& file_path);
 
 	GroupResult get_group_result() const;
 

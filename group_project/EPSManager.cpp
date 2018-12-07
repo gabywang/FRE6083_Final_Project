@@ -2,21 +2,20 @@
 #include "EPSManager.h"
 #include "utils.h"
 #include <vector>
-#include <iostream>
 #include <fstream>
 
 EPSManager* EPSManager::_instance = nullptr;
 
-EPSManager* EPSManager::get_instance(const std::string&& file_path)
+EPSManager* EPSManager::get_instance(const std::string& file_path)
 {
 	if (!_instance)
 	{
-		_instance = new EPSManager(std::move(file_path));
+		_instance = new EPSManager(file_path);
 	}
 	return _instance;
 }
 
-EPSManager::EPSManager(const std::string&& file_path): _eps_diff_se(0)
+EPSManager::EPSManager(const std::string& file_path)
 {
 	std::ifstream file;
 
@@ -41,14 +40,6 @@ EPSManager::EPSManager(const std::string&& file_path): _eps_diff_se(0)
 	}
 
 	_eps_diff_se = std::move(Series<TickerInfo, false>(_tmp, eps_diff));
-}
-
-EPSManager::EPSManager(const EPSManager& rhs) : _eps_diff_se(rhs._eps_diff_se) { }
-
-EPSManager& EPSManager::operator =(const EPSManager& rhs)
-{
-	_eps_diff_se = rhs._eps_diff_se;
-	return *this;
 }
 
 GroupResult EPSManager::get_group_result() const
