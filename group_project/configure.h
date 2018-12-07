@@ -6,7 +6,7 @@
 //to prevent recompile of the whole project because of default parameter change
 
 #define _TRADING_DAT_FILE ".\trading_days.txt"
-#define _EPS_FILE ".\eps.xlsx"
+#define _EPS_FILE "C:\\Users\\Rex Hoo\\Documents\\workspace\\financial_computing\\FRE6083_Final_Project\\SeriesUnitTest\\test.csv"
 
 #define _MAX_PRICE_BUFF_SIZE 500
 #define _TOTAL_STOCK_NUM 1000
@@ -19,7 +19,6 @@
 #define _INDEX_START "1/1/1970" // for mat not sure
 #define _INDEX_END "11/30/2018"
 
-
 extern const std::string TRADING_DAT_FILE;
 extern const std::string EPS_FILE;
 
@@ -27,7 +26,7 @@ extern const int MAX_PRICE_BUFF_SIZE;
 extern const int TOTAL_STOCK_NUM;
 extern const int GROUP_COUNT;
 extern const int SAMPLE_COUNT;
-extern const int PRICE_LENGTH;
+extern const size_t PRICE_LENGTH;
 extern const int SAMPLE_SIZE;
 
 extern const std::string INDEX_TKR;

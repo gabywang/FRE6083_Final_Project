@@ -174,9 +174,12 @@
     <ClInclude Include="PlotManager.h" />
     <ClInclude Include="SampleManager.h" />
     <ClInclude Include="TradeDay.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="configure.cpp" />
     <ClCompile Include="curl_test.cpp" />
+    <ClCompile Include="DataTypes.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

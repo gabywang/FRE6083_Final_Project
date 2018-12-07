@@ -1,12 +1,13 @@
+#include "pch.h"
 #include "DataTypes.h"
 
 Vector Vector::operator *(double x)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = (*this)[i] * x;
 	}
@@ -16,11 +17,11 @@ Vector Vector::operator *(double x)
 
 Vector operator *(double x, const Vector& v)
 {
-	const int _sz(v.size());
+	const size_t _sz(v.size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = v[i] * x;
 	}
@@ -30,11 +31,11 @@ Vector operator *(double x, const Vector& v)
 
 Vector Vector::operator *(const Vector& r)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = (*this)[i] * r[i];
 	}
@@ -42,29 +43,13 @@ Vector Vector::operator *(const Vector& r)
 	return _tv;
 }
 
-
-double Vector::operator ^(const Vector& r)
-{
-	double _ans(0.0);
-
-	const int _sz(size());
-
-	for (int i(0); i < _sz; ++i)
-	{
-		_ans += (*this)[i] * r[i];
-	}
-
-	return _ans;
-}
-
-
 Vector Vector::operator +(double x)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = (*this)[i] + x;
 	}
@@ -74,11 +59,11 @@ Vector Vector::operator +(double x)
 
 Vector operator +(double x, const Vector& v)
 {
-	const int _sz(v.size());
+	const size_t _sz(v.size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = v[i] + x;
 	}
@@ -88,11 +73,11 @@ Vector operator +(double x, const Vector& v)
 
 Vector Vector::operator +(const Vector& r)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = (*this)[i] + r[i];
 	}
@@ -102,11 +87,11 @@ Vector Vector::operator +(const Vector& r)
 
 Vector Vector::operator -(double x)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = (*this)[i] - x;
 	}
@@ -116,11 +101,11 @@ Vector Vector::operator -(double x)
 
 Vector operator -(double x, const Vector& v)
 {
-	const int _sz(v.size());
+	const size_t _sz(v.size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = x - v[i];
 	}
@@ -130,11 +115,11 @@ Vector operator -(double x, const Vector& v)
 
 Vector Vector::operator -(const Vector& r)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = (*this)[i] - r[i];
 	}
@@ -144,11 +129,11 @@ Vector Vector::operator -(const Vector& r)
 
 Vector Vector::operator /(double x)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = (*this)[i] / x;
 	}
@@ -158,11 +143,11 @@ Vector Vector::operator /(double x)
 
 Vector Vector::operator /(const Vector& r)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
 	Vector _tv(_sz);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_tv[i] = (*this)[i] / r[i];
 	}
@@ -172,9 +157,9 @@ Vector Vector::operator /(const Vector& r)
 
 const Vector& Vector::operator +=(double x)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		(*this)[i] += x;
 	}
@@ -184,9 +169,9 @@ const Vector& Vector::operator +=(double x)
 
 const Vector& Vector::operator -=(double x)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		(*this)[i] -= x;
 	}
@@ -196,9 +181,9 @@ const Vector& Vector::operator -=(double x)
 
 const Vector& Vector::operator *=(double x)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		(*this)[i] *= x;
 	}
@@ -208,9 +193,9 @@ const Vector& Vector::operator *=(double x)
 
 const Vector& Vector::operator /=(double x)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		(*this)[i] /= x;
 	}
@@ -220,9 +205,9 @@ const Vector& Vector::operator /=(double x)
 
 const Vector& Vector::operator +=(const Vector& r)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		(*this)[i] += r[i];
 	}
@@ -232,9 +217,9 @@ const Vector& Vector::operator +=(const Vector& r)
 
 const Vector& Vector::operator -=(const Vector& r)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		(*this)[i] -= r[i];
 	}
@@ -244,9 +229,9 @@ const Vector& Vector::operator -=(const Vector& r)
 
 const Vector& Vector::operator *=(const Vector& r)
 {
-	const int _sz(size());
+	const size_t _sz(size());
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		(*this)[i] *= r[i];
 	}
@@ -258,7 +243,7 @@ const Vector& Vector::operator /=(const Vector& r)
 {
 	const size_t _sz(size());
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		(*this)[i] /= r[i];
 	}
@@ -278,7 +263,7 @@ Vector Vector::cumsum() const
 	Vector _tmp(_sz);
 	double _t_sum(0.0);
 
-	for (int i(0); i < _sz; ++i)
+	for (size_t i(0); i < _sz; ++i)
 	{
 		_t_sum = _tmp[i] = (*this)[i] + _t_sum; //is this correct?
 	}

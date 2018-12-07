@@ -39,7 +39,7 @@ protected:
 	HashHistDataManager(const HashHistDataManager& dm);
 	HashHistDataManager& operator =(const HashHistDataManager& rhs);
 
-	std::unordered_map<Ticker, _PriceBuff*> _hmap;
+	//std::unordered_map<Ticker, _PriceBuff*> _hmap;
 	
 	void _pop_foremost(); //当储存的Price太多，hash_map性能下降，内存占用大，需要删除一个，O(n)
 

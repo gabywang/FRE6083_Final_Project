@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#if 1
+#if 0
 #include "DataTypes.h"
 #include "HistDataManager.h"
 #include "EPSManager.h"
@@ -17,7 +17,7 @@ int main()
 	PlotManager* plot_manager(PlotManager::get_instance());
 
 	SummaryMatrix result;
-	Series<TradeDay> index_se(hist_data_fetcher->get_ticker_price(std::move(INDEX_TKR), TradeDay(INDEX_START), TradeDay(INDEX_END));
+	Series<TradeDay> index_se(hist_data_fetcher->get_ticker_price(std::move(INDEX_TKR), TradeDay(std::move(INDEX_START)), TradeDay(std::move(INDEX_END))));
 
 	FOR_LOOP(0, i, SAMPLE_COUNT)
 	{
@@ -35,7 +35,7 @@ int main()
 			{
 				Series<TradeDay>&& tkr_se = hist_data_manager->get_ticker(std::move(info_pair.first), info_pair.second, PRICE_LENGTH);
 				Series<TradeDay>&& index_common = index_se.common(aar);
-				aar += (tkr_se.pct_change() - index_common.pct_change()).values;
+				aar += (tkr_se.pct_change() - index_common.pct_change()).get_values();
 			}
 
 			aar /= TOTAL_STOCK_NUM / GROUP_COUNT;

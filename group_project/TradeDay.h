@@ -11,6 +11,8 @@ protected:
 	size_t _day_id;
 
 public:
+	TradeDay(const std::string&& time_str);
+
 	const TradeDay& move_forward(size_t N = 1);
 	const TradeDay& move_backward(size_t N = 1);
 	
@@ -20,6 +22,7 @@ public:
 	bool operator !=(const TradeDay& rhs) const;
 };
 
+/*
 inline const TradeDay& TradeDay::move_forward(size_t N = 1)
 {
 	;
@@ -49,5 +52,6 @@ bool TradeDay::operator !=(const TradeDay& rhs) const
 {
 
 }
+*/
 #endif
 

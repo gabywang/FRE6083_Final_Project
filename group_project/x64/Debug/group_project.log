@@ -1,0 +1,4 @@
+﻿  main.cpp
+MSVCRTD.lib(exe_main.obj) : error LNK2019: unresolved external symbol main referenced in function "int __cdecl invoke_main(void)" (?invoke_main@@YAHXZ)
+C:\Users\Rex Hoo\Documents\workspace\financial_computing\libcurl\lib\Debug\curllib.lib : warning LNK4272: library machine type 'x86' conflicts with target machine type 'x64'
+C:\Users\Rex Hoo\Documents\workspace\financial_computing\FRE6083_Final_Project\x64\Debug\group_project.exe : fatal error LNK1120: 1 unresolved externals
