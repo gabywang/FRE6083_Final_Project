@@ -19,9 +19,8 @@ public:
 		return &_instance;
 	}
 
-	Series<TradeDay> get_ticker_price(Ticker&& tkr, TradeDay start, TradeDay end);
+	PriceBuff get_ticker_price(const Ticker& tkr, const TradeDay& start, const TradeDay& end);
 
-	~HistDataFetcher();
 };
 
 inline void HistDataFetcher::_parse(ParseResult* result, const std::string& raw_str)

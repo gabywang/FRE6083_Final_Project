@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#if 0
+#if 1
 #include "DataTypes.h"
 #include "HistDataManager.h"
 #include "EPSManager.h"
@@ -12,18 +12,17 @@ int main()
 {
 	HistDataFetcher* hist_data_fetcher(HistDataFetcher::get_instance());
 	HistDataManager* hist_data_manager(HashHistDataManager::get_instance(hist_data_fetcher));
-	EPSManager* eps_manager = new EPSManager();
-	SampleManager* sample_manager = new SampleManager(eps_manager->get_group_result(GROUP_COUNT));
+	EPSManager* eps_manager(EPSManager::get_instance(EPS_FILE));
+	SampleManager* sample_manager(new SampleManager(eps_manager->get_group_result()));
 	PlotManager* plot_manager(PlotManager::get_instance());
 
 	SummaryMatrix result;
-	Series<TradeDay> index_se(hist_data_fetcher->get_ticker_price(std::move(INDEX_TKR), TradeDay(std::move(INDEX_START)), TradeDay(std::move(INDEX_END))));
+	Series<TradeDay, false>&& index_se(hist_data_fetcher->get_ticker_price(INDEX_TKR, TradeDay(INDEX_START), TradeDay(INDEX_END)).price);
 
 	FOR_LOOP(0, i, SAMPLE_COUNT)
 	{
 		Vector aar(PRICE_LENGTH - 1);
 		Vector caar(PRICE_LENGTH - 1);
-
 		const GroupResult&& sample = sample_manager->get_sample(SAMPLE_SIZE);
 
 		FOR_LOOP(0, group_id, sample.size())
@@ -33,8 +32,8 @@ int main()
 
 			for (auto& info_pair : sample[group_id])
 			{
-				Series<TradeDay>&& tkr_se = hist_data_manager->get_ticker(std::move(info_pair.first), info_pair.second, PRICE_LENGTH);
-				Series<TradeDay>&& index_common = index_se.common(aar);
+				Series<TradeDay, false>&& tkr_se = hist_data_manager->get_ticker(info_pair.first, info_pair.second, PRICE_LENGTH);
+				Series<TradeDay, false>&& index_common = index_se.right_join(tkr_se.get_index());
 				aar += (tkr_se.pct_change() - index_common.pct_change()).get_values();
 			}
 
@@ -43,7 +42,7 @@ int main()
 
 			if (i == 0)
 			{
-				result.push_back(std::make_pair(std::move(aar), std::move(caar)));
+				result.push_back(std::move(std::make_pair(aar, caar)));
 			}
 			else
 			{

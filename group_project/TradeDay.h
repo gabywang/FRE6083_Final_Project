@@ -14,7 +14,7 @@ protected:
 
 public:
 	TradeDay() = default;
-	TradeDay(const std::string&& time_str);
+	TradeDay(const std::string& time_str);
 
 	const TradeDay& move_forward(size_t N = 1);
 	const TradeDay& move_backward(size_t N = 1);
@@ -37,7 +37,7 @@ public:
 	*/
 };
 
-inline TradeDay::TradeDay(const std::string&& time_str) : _day_id(0) { }
+inline TradeDay::TradeDay(const std::string& time_str) : _day_id(0) { }
 
 inline const TradeDay& TradeDay::move_forward(size_t N)
 {

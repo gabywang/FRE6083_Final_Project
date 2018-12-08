@@ -6,10 +6,10 @@
 #include "EPSManager.h"
 #include <fstream>
 
-#define VECTOR_TEST 0
-#define SERIES_TEST 0
-#define SERIES_FUNCS 0
-#define EXCEL_INTERACT 0
+#define VECTOR_TEST 1
+#define SERIES_TEST 1
+#define SERIES_FUNCS 1
+#define EXCEL_INTERACT 1
 #define EPS_MANAGER 1
 
 template <typename T>
@@ -88,20 +88,19 @@ int main()
 #endif
 
 #if SERIES_FUNCS
-	Series<int> see(std::move(vr2));
-	see.sort_by_value();
+	se.sort_by_value();
 	//std::cout << se.get_values();
 	//std::cout << se.get_index();
 
-	auto&& se3 = see.pct_change();
+	auto&& se3 = se.pct_change();
 	//std::cout << se3.get_values();
 
-	se3 = see.cumsum();
+	se3 = se.cumsum();
 	//std::cout << se3.get_values();
 
-	se3 = see.right_join(std::vector<int>{1, 2, 3});
+	se3 = se.right_join(std::vector<int>{1, 2, 3});
 	//std::cout << se3.get_values();
-	std::cout << see;
+	std::cout << se;
 
 #endif
 
@@ -120,7 +119,7 @@ int main()
 
 	file.close();
 	*/
-	Series<int> seee(std::move(EPS_FILE), 0, 1, 1);
+	Series<Ticker> seee(EPS_FILE, 0, 1, 1);
 	std::cout << seee;
 
 #endif

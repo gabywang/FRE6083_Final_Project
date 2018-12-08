@@ -3,21 +3,11 @@
 
 #include "HistDataFetcher.h"
 #include "TradeDay.h"
-
 #include <unordered_map>
 
 class HistDataManager
 {
 protected:
-	class _PriceBuff : public Series<TradeDay>
-	{
-	private:
-		friend HistDataManager;
-
-	protected:
-		time_t arrive_time;
-	};
-
 	static HistDataFetcher* _fetcher;
 
 	HistDataManager();
@@ -25,12 +15,13 @@ protected:
 	HistDataManager& operator =(const HistDataManager& rhs);
 
 public:
-	virtual Series<TradeDay> get_ticker(const Ticker&& tkr, TradeDay mid, int N) = 0;
+	virtual Series<TradeDay, false> get_ticker(const Ticker& tkr, TradeDay mid, int N) = 0;
 
 	virtual void flush() = 0;
 
 	virtual ~HistDataManager();
 };
+
 
 class HashHistDataManager : public HistDataManager
 {
@@ -51,51 +42,12 @@ public:
 		return &_instance;
 	}
 
-	virtual Series<TradeDay> get_ticker(const Ticker&& tkr, TradeDay mid, int N) override; //little tricky
+	virtual Series<TradeDay, false> get_ticker(const Ticker& tkr, TradeDay mid, int N) override; //little tricky
 
 	virtual void flush() override;
 
 	virtual ~HashHistDataManager();
 };
 
-inline HistDataManager::HistDataManager()
-{
-	;
-}
-
-inline HistDataManager::HistDataManager(const HistDataManager& dm)
-{
-	;
-}
-
-inline HistDataManager& HistDataManager::operator =(const HistDataManager& rhs)
-{
-	;
-}
-
-inline HistDataManager::~HistDataManager()
-{
-	;
-}
-
-inline HashHistDataManager::HashHistDataManager()
-{
-	;
-}
-
-inline HashHistDataManager::HashHistDataManager(const HashHistDataManager& dm)
-{
-	;
-}
-
-inline HashHistDataManager& HashHistDataManager::operator =(const HashHistDataManager& rhs)
-{
-	;
-}
-
-inline HashHistDataManager::~HashHistDataManager()
-{
-	;
-}
 #endif
 
