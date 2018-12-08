@@ -25,6 +25,10 @@
 #define _EPS_RE_DATE_COL 3
 #define _EPS_START_ROW 1
 
+#define _TRADING_INDEX_COL 0
+#define _TRADING_DAT_COL 1
+#define _TRADING_START_ROW 1
+
 #define _BAND1 .10
 #define _BAND2 .05
 #define _BAND3 .95
@@ -49,6 +53,9 @@ extern const int EPS_EPS_COL;
 extern const int EPS_EST_EPS_COL;
 extern const int EPS_RE_DATE_COL;
 extern const int EPS_START_ROW;
+
+extern const int TRADING_DAT_COL;
+extern const int TRADING_START_ROW;
 
 extern const double BAND1;
 extern const double BAND2;

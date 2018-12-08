@@ -21,6 +21,10 @@ const int EPS_EST_EPS_COL          = _EPS_EST_EPS_COL;
 const int EPS_RE_DATE_COL          = _EPS_RE_DATE_COL;
 const int EPS_START_ROW            = _EPS_START_ROW;
 
+const int TRADING_INDEX_COL        = _TRADING_INDEX_COL;
+const int TRADING_DAT_C0L          = _TRADING_DAT_COL;
+const int TRADING_START_ROW        = _TRADING_START_ROW;
+
 const double BAND1                 = _BAND1;
 const double BAND2                 = _BAND2;
 const double BAND3                 = _BAND3;

@@ -2,19 +2,25 @@
 #define TradeDay_h
 
 #include "pch.h"
+#include "configure.h"
+#include "DataTypes.h"
+#include <algorithm>
 #include <vector>
 #include <ostream>
+#include <ctime>
+#include <string>
+
 
 class TradeDay
 {
 protected:
 	const static std::vector<time_t> _trading_days;
-
 	size_t _day_id;
+	TradeDay(const std::string& file_path);
 
 public:
 	TradeDay() = default;
-	TradeDay(const std::string& time_str);
+	TradeDay(const time_t& time_str);
 
 	const TradeDay& move_forward(size_t N = 1);
 	const TradeDay& move_backward(size_t N = 1);
@@ -36,40 +42,6 @@ public:
 	}
 	*/
 };
-
-inline TradeDay::TradeDay(const std::string& time_str) : _day_id(0) { }
-
-inline const TradeDay& TradeDay::move_forward(size_t N)
-{
-	return *this;
-}
-
-inline const TradeDay& TradeDay::move_backward(size_t N)
-{
-	return *this;
-}
-
-/*
-bool TradeDay::operator <(const TradeDay& rhs) const
-{
-	return true;
-}
-
-bool TradeDay::operator >(const TradeDay& rhs) const
-{
-	return true;
-}
-
-bool TradeDay::operator ==(const TradeDay& rhs) const
-{
-	return true;
-}
-
-bool TradeDay::operator !=(const TradeDay& rhs) const
-{
-	return true;
-}
-*/
 
 #endif
 
