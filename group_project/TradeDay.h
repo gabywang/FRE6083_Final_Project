@@ -4,10 +4,10 @@
 #include "pch.h"
 #include "configure.h"
 #include "DataTypes.h"
+#include "utils.h"
 #include <algorithm>
 #include <vector>
 #include <ostream>
-#include <ctime>
 #include <string>
 
 
@@ -20,9 +20,10 @@ protected:
 public:
 	TradeDay() = default;
 	TradeDay(const time_t& time_str);
-
-	TradeDay move_forward(size_t N = 1) const;
-	TradeDay move_backward(size_t N = 1) const;
+    static std::vector<time_t> set_time(const std::string& file_path);
+    
+	const TradeDay& move_forward(size_t N = 1);
+	const TradeDay& move_backward(size_t N = 1);
 
 	bool operator <(const TradeDay& rhs) const;
 	bool operator >(const TradeDay& rhs) const;
