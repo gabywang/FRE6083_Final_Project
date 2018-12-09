@@ -25,5 +25,11 @@ public:
 
 	~EPSManager();
 };
+
+inline Series<TickerInfo, false> EPSManager::get_summary() const
+{
+	return _eps_diff_se;
+}
+
 #endif
 
