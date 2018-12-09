@@ -27,22 +27,22 @@ TradeDay::TradeDay(const std::string& file_path) {
 }
 
 //const std::vector<time_t> TradeDay::_trading_days = std::vector<time_t>(10);
-
 TradeDay::TradeDay(const time_t & time_str) : _day_id(0) {
 	//std::vector<time_t>::iterator itr;
 	auto it = std::find(_trading_days.begin(), _trading_days.end(), time_str);
 	if (it != _trading_days.end()) {
 		_day_id = std::distance(_trading_days.begin(), it);
 	}
+	// need to fix: what it eps release date not in trading day vector?
 	else { throw new std::invalid_argument("time_str not in range.");}
 }
 
-const TradeDay& TradeDay::move_forward(size_t N) {
+TradeDay TradeDay::move_forward(size_t N) const{
 	_day_id += N;
 	return *this;
 }
 
-const TradeDay& TradeDay::move_backward(size_t N) {
+TradeDay TradeDay::move_backward(size_t N) const{
 	_day_id -= N;
 	return *this;
 }
