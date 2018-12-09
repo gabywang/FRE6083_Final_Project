@@ -15,6 +15,11 @@ EPSManager* EPSManager::get_instance(const std::string& file_path)
 	return _instance;
 }
 
+Series<TickerInfo, false> EPSManager::get_summary() const
+{
+	return _eps_diff_se;
+}
+
 EPSManager::EPSManager(const std::string& file_path)
 {
 	std::ifstream file;
