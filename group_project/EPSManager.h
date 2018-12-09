@@ -20,6 +20,7 @@ protected:
 public:
 	static EPSManager* get_instance(const std::string& file_path);
 
+	Series<TickerInfo, false> get_summary() const;
 	GroupResult get_group_result() const;
 
 	~EPSManager();
