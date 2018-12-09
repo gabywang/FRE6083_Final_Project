@@ -1,15 +1,18 @@
 #include "pch.h"
 #include "TradeDay.h"
 #include "utils.h"
+#include "DataTypes.h"
+#include "configure.h"
 #include <vector>
 #include <fstream>
 
+/*
 TradeDay::TradeDay(const std::string& file_path) {
 	std::ifstream file;
 	file.open(file_path);
 	if (!file.is_open()) throw new std::runtime_error("Cannot open file.");
 
-	/* Need to modify to import correctly.*/
+	/* Need to modify to import correctly.
 	auto&& trading_day = read_col_from_csv<std::vector<time_t>(file, TRADING_START_ROW, TRADING_DAT_COL);
 
 	file.close();
@@ -21,12 +24,14 @@ TradeDay::TradeDay(const std::string& file_path) {
 		_tmp[i] = TradeDay(std::move(trading_day[i]));
 	}
 
-	/* Import trading day into vector with type time_t.*/
+	/* Import trading day into vector with type time_t.
 	_trading_days = std::move(std::vector<time_t>(_tmp));
+}*/
 
-}
+//TradeDay::const static std::vector<time_t> _trading_days =
 
-//const std::vector<time_t> TradeDay::_trading_days = std::vector<time_t>(10);
+const std::vector<time_t> TradeDay::_trading_days = std::vector<time_t>(10);
+
 TradeDay::TradeDay(const time_t & time_str) : _day_id(0) {
 	//std::vector<time_t>::iterator itr;
 	auto it = std::find(_trading_days.begin(), _trading_days.end(), time_str);

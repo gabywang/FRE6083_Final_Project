@@ -22,7 +22,7 @@ public:
 	TradeDay(const time_t& time_str);
 
 	TradeDay move_forward(size_t N = 1) const;
-  TradeDay move_backward(size_t N = 1) const;
+	TradeDay move_backward(size_t N = 1) const;
 
 	bool operator <(const TradeDay& rhs) const;
 	bool operator >(const TradeDay& rhs) const;
